@@ -1,7 +1,7 @@
 def mvnHome
 def remote = [:]
 remote.name = "Staging"
-remote.host = "172.31.7.87"
+remote.host = "172.31.7.121"
 remote.allowAnyHosts = true
 remote.user = "centos"
 remote.password = "Rnstech@123"
@@ -11,20 +11,20 @@ pipeline {
    stages {
       stage('Check Out Code') {
           agent {
-              label 'BuildServer'
+              label 'Slave'
           }
          steps {
             // Get src code from a GitHub repository
-            git credentialsId: 'github_un-pwd', url: 'https://github.com/venkat09docs/Maven-Java-Project.git'
+            git credentialsId: 'Github_un_pwd', url: 'https://github.com/venkat09docs/Maven-Java-Project.git'
             
             script{
-                mvnHome = tool name: 'maven3.6', type: 'maven'
+                mvnHome = tool name: 'maven3', type: 'maven'
             }      
          }         
       }
       stage('Build'){
           agent {
-              label 'BuildServer'
+              label 'Slave'
           }
         steps{
             // Run Maven on a Unix agent.
@@ -44,14 +44,14 @@ pipeline {
    
    stage('Deploy to Staging'){
       agent {
-              label 'BuildServer'
+              label 'Slave'
           }
           
       steps{
          sh "mv target/*.war target/webapp.war"
-         sshCommand remote: remote, command: 'sh /home/centos/tomcat8/bin/shutdown.sh'
-         sshPut remote: remote, from: 'target/webapp.war', into: '/home/centos/tomcat8/webapps/'
-         sshCommand remote: remote, command: 'sh /home/centos/tomcat8/bin/startup.sh'
+         sshCommand remote: remote, command: 'sh /home/centos/tomcta8/bin/shutdown.sh'
+         sshPut remote: remote, from: 'target/webapp.war', into: '/home/centos/tomcta8/webapps/'
+         sshCommand remote: remote, command: 'sh /home/centos/tomcta8/bin/startup.sh'
       }
    }
    }
